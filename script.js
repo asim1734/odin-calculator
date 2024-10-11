@@ -1,5 +1,6 @@
 const calcButtons = document.querySelectorAll(".calculator button")
-const valueDiv = document.querySelector(".expression")
+const expressionDiv = document.querySelector(".expression")
+const currentValueDiv = document.querySelector(".current-value")
 
 inputs = []
 
@@ -10,20 +11,24 @@ calcButtons.forEach((button) =>{
 }
 
 function handleClicks(a){
-    valueDiv.textContent += a
-    
     if (a == "=")
         evaluate()
-    else if (Number.isInteger(+a) || a == ".")
+    else if (Number.isInteger(+a) || a == "."){
         inputs.push(a)
+        expressionDiv.textContent += a
+    }
     else if (a == "AC")
         clear()
     else if (a == "+/-")
         toggleSign()
     else if (a == "%")
         percentage()
-    else
+    else{
         inputs.push(a)
+        expressionDiv.textContent += a
+        evaluate()
+    }
+        
 }
 
 function evaluate(){
@@ -50,22 +55,37 @@ function operate(nums,operators){
         operator = operators.pop()
         res = 0
         if (operator == "+")
-            res = a + b
+            res = add(a,b)
         else if (operator == "-")
-            res = a - b
+            res = subtract(a,b)
         else if (operator == "*")
-            res = a * b
+            res = multiply(a,b)
         else if (operator == "/"){
-            if (b == 0)
-                alert("Can Not divide by zero")
-            else
-                res = a / b
+            res = divide(a,b)
         }
         nums.push(res)
     }
-    valueDiv.textContent = nums.pop()
+    currentValueDiv.textContent = nums.pop()
 }
 
+function add(a, b){
+    return a + b
+}
+
+function subtract(a,b){
+    return a - b
+}
+
+function multiply(a,b){
+    return a * b
+}
+
+function divide(){
+    if (b == 0)
+        alert("Can Not divide by zero")
+    else
+        return a / b
+}
 
 
 innit()
