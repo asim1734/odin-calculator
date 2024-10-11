@@ -1,11 +1,13 @@
 const calcButtons = document.querySelectorAll(".calculator button")
 const expressionDiv = document.querySelector(".expression")
 const currentValueDiv = document.querySelector(".current-value")
+currentValueDiv.textContent = "0"
 
 inputs = []
 
 function innit(){
 calcButtons.forEach((button) =>{
+    currentValueDiv.textContent = "0"
     button.addEventListener("click", (event) => handleClicks(event.target.textContent))
 })
 }
@@ -85,6 +87,15 @@ function divide(){
         alert("Can Not divide by zero")
     else
         return a / b
+}
+
+function clear(){
+    inputs = []
+    nums = []
+    operators = []
+    currentValueDiv.textContent = "0"
+    expressionDiv.textContent = ""
+
 }
 
 
