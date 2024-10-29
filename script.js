@@ -1,102 +1,123 @@
-const calcButtons = document.querySelectorAll(".calculator button")
-const expressionDiv = document.querySelector(".expression")
-const currentValueDiv = document.querySelector(".current-value")
-currentValueDiv.textContent = "0"
+const calcButtons = document.querySelectorAll(".calculator button");
+const expressionDiv = document.querySelector(".expression");
+const currentValueDiv = document.querySelector(".current-value");
+currentValueDiv.textContent = "0";
 
-inputs = []
+let inputs = [];
+let currentNumber = ""; // To keep track of the current number being entered
 
-function innit(){
-calcButtons.forEach((button) =>{
-    currentValueDiv.textContent = "0"
-    button.addEventListener("click", (event) => handleClicks(event.target.textContent))
-})
+function init() {
+  calcButtons.forEach((button) => {
+    button.addEventListener("click", (event) => handleClicks(event.target.textContent));
+  });
 }
 
-function handleClicks(a){
-    if (a == "=")
-        evaluate()
-    else if (Number.isInteger(+a) || a == "."){
-        inputs.push(a)
-        expressionDiv.textContent += a
+function handleClicks(a) {
+  if (a === "=") {
+    expressionDiv.textContent += currentValueDiv.textContent + '=';
+    inputs.push(currentNumber);
+    currentNumber = "";
+    evaluate();
+  } else if (Number.isInteger(+a) || a === ".") {
+    currentNumber += a;
+    currentValueDiv.textContent = currentNumber;
+  } else if (a === "AC") {
+    clear();
+  } else if (a === "+/-") {
+    toggleSign();
+  } else if (a === "%") {
+    percentage();
+  } else {
+    if (currentNumber !== "") {
+      inputs.push(currentNumber);
+      currentNumber = "";
     }
-    else if (a == "AC")
-        clear()
-    else if (a == "+/-")
-        toggleSign()
-    else if (a == "%")
-        percentage()
-    else{
-        inputs.push(a)
-        expressionDiv.textContent += a
-        evaluate()
+    inputs.push(a);
+    expressionDiv.textContent += currentValueDiv.textContent + a;
+    currentValueDiv.textContent = "";
+    if (a !== '/') {
+      evaluate();
     }
-        
+  }
 }
 
-function evaluate(){
-    nums = []
-    currentNumber = ""
-    operators = []
-    for (let i = 0 ; i < inputs.length ; i++){
-        if (Number.isInteger(+inputs[i]))
-            currentNumber += inputs[i]
-        else{
-            nums.push(+currentNumber)
-            currentNumber = ""
-            operators.push(inputs[i])
-        }
+function evaluate() {
+  let nums = [];
+  let currentNumber = "";
+  let operators = [];
+  for (let i = 0; i < inputs.length; i++) {
+    if (Number.isInteger(+inputs[i]) || inputs[i] === '.') {
+      currentNumber += inputs[i];
+    } else {
+      nums.push(+currentNumber);
+      currentNumber = "";
+      operators.push(inputs[i]);
     }
-    nums.push(+currentNumber)
-    operate(nums, operators)
+  }
+  nums.push(+currentNumber);
+  operate(nums, operators);
 }
 
-function operate(nums,operators){
-    while (nums.length != 1){
-        b = nums.pop()
-        a = nums.pop()
-        operator = operators.pop()
-        res = 0
-        if (operator == "+")
-            res = add(a,b)
-        else if (operator == "-")
-            res = subtract(a,b)
-        else if (operator == "*")
-            res = multiply(a,b)
-        else if (operator == "/"){
-            res = divide(a,b)
-        }
-        nums.push(res)
+function operate(nums, operators) {
+  while (nums.length !== 1) {
+    let b = nums.pop();
+    let a = nums.pop();
+    let operator = operators.pop();
+    let res = 0;
+    if (operator === "+") {
+      res = add(a, b);
+    } else if (operator === "-") {
+      res = subtract(a, b);
+    } else if (operator === "*") {
+      res = multiply(a, b);
+    } else if (operator === "/") {
+      res = divide(a, b);
     }
-    currentValueDiv.textContent = nums.pop()
+    nums.push(res);
+  }
+  currentValueDiv.textContent = nums.pop().toString();
 }
 
-function add(a, b){
-    return a + b
+function add(a, b) {
+  return a + b;
 }
 
-function subtract(a,b){
-    return a - b
+function subtract(a, b) {
+  return a - b;
 }
 
-function multiply(a,b){
-    return a * b
+function multiply(a, b) {
+  return a * b;
 }
 
-function divide(){
-    if (b == 0)
-        alert("Can Not divide by zero")
-    else
-        return a / b
+function divide(a, b) {
+  if (b === 0) {
+    alert("Cannot divide by zero");
+    return 0;
+  } else {
+    return a / b;
+  }
 }
 
-function clear(){
-    inputs = []
-    nums = []
-    operators = []
-    currentValueDiv.textContent = "0"
-    expressionDiv.textContent = ""
-
+function clear() {
+  inputs = [];
+  currentNumber = "";
+  currentValueDiv.textContent = "0";
+  expressionDiv.textContent = "";
 }
 
+function toggleSign() {
+  if (currentNumber) {
+    currentNumber = (parseFloat(currentNumber) * -1).toString();
+    currentValueDiv.textContent = currentNumber;
+  }
+}
 
-innit()
+function percentage() {
+  if (currentNumber) {
+    currentNumber = (parseFloat(currentNumber) / 100).toString();
+    currentValueDiv.textContent = currentNumber;
+  }
+}
+
+init();
